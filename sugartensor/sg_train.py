@@ -173,11 +173,11 @@ def sg_optim(loss, **kwargs):
         optim = tf.train.AdamOptimizer(learning_rate=opt.lr, beta1=opt.beta1, beta2=opt.beta2)
     elif opt.optim == 'DP_GD':
         optim = tf.train.dp_optimizer.DPGradientDescentOptimizer(
-                    FLAGS.lr,
-                    [FLAGS.eps, FLAGS.delta],
-                    gaussian_sanitizer,
-                    sigma=sigma,
-                    batches_per_lot=FLAGS.batches_per_lot)
+                    opt.lr,
+                    [opt.eps, opt.delta],
+                    opt.gaussian_sanitizer,
+                    sigma=opt.sigma,
+                    batches_per_lot=opt.batches_per_lot)
     else:
         optim = tf.train.GradientDescentOptimizer(learning_rate=opt.lr)
 
