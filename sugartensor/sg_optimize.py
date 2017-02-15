@@ -1,7 +1,7 @@
 from __future__ import absolute_import
 import tensorflow as tf
 
-from differential_privacy.per_example_gradients import per_example_gradients
+from dp.per_example_gradients import per_example_gradients
 
 
 class DPGradientDescentOptimizer(tf.train.GradientDescentOptimizer):
