@@ -146,7 +146,7 @@ def sg_restore(sess, save_path, category=''):
 
 
 def sg_optim(loss, **kwargs):
-    r"""Applies gradients to variables.
+    """Applies gradients to variables.
 
     Args:
         loss: A 0-D `Tensor` containing the value to minimize.

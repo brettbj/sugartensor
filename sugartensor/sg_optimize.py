@@ -5,9 +5,9 @@ from dp.per_example_gradients import per_example_gradients
 
 
 class DPGradientDescentOptimizer(tf.train.GradientDescentOptimizer):
-  """Differentially private gradient descent optimizer.
-  """
-
+    """Differentially private gradient descent optimizer.
+    """
+        
     def __init__(self, learning_rate, eps_delta, sanitizer,
                  sigma=None, use_locking=False, name="DPGradientDescent",
                  batches_per_lot=1):
