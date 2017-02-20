@@ -40,7 +40,7 @@ class DPGradientDescentOptimizer(tf.train.GradientDescentOptimizer):
         for var in var_list:
           v_grad_accum = tf.Variable(tf.zeros_like(var),
                                      trainable=False,
-                                     name=utils.GetTensorOpName(var))
+                                     name=self.GetTensorOpName(var))
           self._grad_accum_dict[var.name] = v_grad_accum
 
     self._eps_delta = eps_delta
