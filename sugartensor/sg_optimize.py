@@ -1,7 +1,7 @@
 from __future__ import absolute_import
 import tensorflow as tf
 
-import per_example_gradients
+import sugartensor.per_example_gradients
 
 
 class DPGradientDescentOptimizer(tf.train.GradientDescentOptimizer):
