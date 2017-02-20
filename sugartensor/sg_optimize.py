@@ -40,7 +40,7 @@ class DPGradientDescentOptimizer(tf.train.GradientDescentOptimizer):
         for var in var_list:
           v_grad_accum = tf.Variable(tf.zeros_like(var),
                                      trainable=False,
-                                     name=self.GetTensorOpName(var))
+                                     name=GetTensorOpName(var))
           self._grad_accum_dict[var.name] = v_grad_accum
 
     self._eps_delta = eps_delta
@@ -68,7 +68,7 @@ class DPGradientDescentOptimizer(tf.train.GradientDescentOptimizer):
     px_grads = per_example_gradients.PerExampleGradients(loss, xs)
     sanitized_grads = []
     for px_grad, v in zip(px_grads, var_list):
-      tensor_name = utils.GetTensorOpName(v)
+      tensor_name = GetTensorOpName(v)
       sanitized_grad = self._sanitizer.sanitize(
           px_grad, self._eps_delta, sigma=self._sigma,
           tensor_name=tensor_name, add_noise=add_noise,
