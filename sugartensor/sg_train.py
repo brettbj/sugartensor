@@ -172,7 +172,7 @@ def sg_optim(loss, **kwargs):
     elif opt.optim == 'Adam':
         optim = tf.train.AdamOptimizer(learning_rate=opt.lr, beta1=opt.beta1, beta2=opt.beta2)
     elif opt.optim == 'DP_GD':
-        optim = tf.train.dp_optimizer.DPGradientDescentOptimizer(
+        optim = tf.sg_optimize.DPGradientDescentOptimizer(
                     opt.lr,
                     [opt.eps, opt.delta],
                     opt.gaussian_sanitizer,
