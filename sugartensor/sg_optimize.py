@@ -2,6 +2,7 @@ from __future__ import absolute_import
 import tensorflow as tf
 
 import sugartensor.per_example_gradients
+import sugartensor.dp_utils as utils
 
 
 class DPGradientDescentOptimizer(tf.train.GradientDescentOptimizer):
@@ -40,7 +41,7 @@ class DPGradientDescentOptimizer(tf.train.GradientDescentOptimizer):
         for var in var_list:
           v_grad_accum = tf.Variable(tf.zeros_like(var),
                                      trainable=False,
-                                     name=GetTensorOpName(var))
+                                     name=utils.GetTensorOpName(var))
           self._grad_accum_dict[var.name] = v_grad_accum
 
     self._eps_delta = eps_delta
@@ -68,7 +69,7 @@ class DPGradientDescentOptimizer(tf.train.GradientDescentOptimizer):
     px_grads = per_example_gradients.PerExampleGradients(loss, xs)
     sanitized_grads = []
     for px_grad, v in zip(px_grads, var_list):
-      tensor_name = GetTensorOpName(v)
+      tensor_name = utils.GetTensorOpName(v)
       sanitized_grad = self._sanitizer.sanitize(
           px_grad, self._eps_delta, sigma=self._sigma,
           tensor_name=tensor_name, add_noise=add_noise,
@@ -134,24 +135,6 @@ class DPGradientDescentOptimizer(tf.train.GradientDescentOptimizer):
     update_cond = tf.equal(tf.constant(0),
                            tf.mod(self._batch_count,
                                   tf.constant(self._batches_per_lot)))
-
-    def GetTensorOpName(x):
-      """Get the name of the op that created a tensor.
-
-      Useful for naming related tensors, as ':' in name field of op is not permitted
-
-      Args:
-      x: the input tensor.
-      Returns:
-      the name of the op.
-      """
-
-      t = x.name.rsplit(":", 1)
-      if len(t) == 1:
-        return x.name
-      else:
-        return t[0]
-
 
     # Things to do for batches other than last of the lot.
     # Add non-noisy clipped grads to shadow variables.
