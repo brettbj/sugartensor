@@ -27,8 +27,7 @@ class DPGradientDescentOptimizer(tf.train.Optimizer):
       batches_per_lot: Number of batches in a lot.
     """
 
-    super(DPGradientDescentOptimizer, self).__init__(learning_rate,
-                                                     use_locking, name)
+    super(DPGradientDescentOptimizer, self).__init__(use_locking, name)
 
     # Also, if needed, define the gradient accumulators
     self._batches_per_lot = batches_per_lot
@@ -44,6 +43,7 @@ class DPGradientDescentOptimizer(tf.train.Optimizer):
                                      name=utils.GetTensorOpName(var))
           self._grad_accum_dict[var.name] = v_grad_accum
 
+    self.lr = learning_rate
     self._eps_delta = eps_delta
     self._sanitizer = sanitizer
     self._sigma = sigma
