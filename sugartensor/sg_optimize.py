@@ -126,7 +126,7 @@ class DPGradientDescentOptimizer(tf.train.GradientDescentOptimizer):
     super(DPGradientDescentOptimizer, self).__init__(learning_rate,
                                                      use_locking, name)
 
-    Also, if needed, define the gradient accumulators
+    #Also, if needed, define the gradient accumulators
     self._batches_per_lot = batches_per_lot
     self._grad_accum_dict = {}
     if batches_per_lot > 1:
