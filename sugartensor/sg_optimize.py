@@ -5,7 +5,7 @@ import sugartensor.per_example_gradients
 import sugartensor.dp_utils as utils
 
 
-class DPGradientDescentOptimizer(tf.train.Optimizer):
+class DPGradientDescentOptimizer(tf.train.GradientDescentOptimizer):
   """Differentially private gradient descent optimizer.
   """
 
@@ -27,9 +27,10 @@ class DPGradientDescentOptimizer(tf.train.Optimizer):
       batches_per_lot: Number of batches in a lot.
     """
 
-    super(DPGradientDescentOptimizer, self).__init__(use_locking, name)
+    super(DPGradientDescentOptimizer, self).__init__(learning_rate,
+                                                     use_locking, name)
 
-    # Also, if needed, define the gradient accumulators
+# Also, if needed, define the gradient accumulators
     self._batches_per_lot = batches_per_lot
     self._grad_accum_dict = {}
     if batches_per_lot > 1:
@@ -43,7 +44,6 @@ class DPGradientDescentOptimizer(tf.train.Optimizer):
                                      name=utils.GetTensorOpName(var))
           self._grad_accum_dict[var.name] = v_grad_accum
 
-    self.lr = learning_rate
     self._eps_delta = eps_delta
     self._sanitizer = sanitizer
     self._sigma = sigma
@@ -51,7 +51,6 @@ class DPGradientDescentOptimizer(tf.train.Optimizer):
   def compute_sanitized_gradients(self, loss, var_list=None,
                                   add_noise=True):
     """Compute the sanitized gradients.
-
     Args:
       loss: the loss tensor.
       var_list: the optional variables.
@@ -82,7 +81,6 @@ class DPGradientDescentOptimizer(tf.train.Optimizer):
   def minimize(self, loss, global_step=None, var_list=None,
                name=None):
     """Minimize using sanitized gradients.
-
     This gets a var_list which is the list of trainable variables.
     For each var in var_list, we defined a grad_accumulator variable
     during init. When batches_per_lot > 1, we accumulate the gradient
@@ -93,9 +91,7 @@ class DPGradientDescentOptimizer(tf.train.Optimizer):
     SGD with one lot being the equivalent of one usual batch of size
     batch_size * batches_per_lot.
     This allows us to simulate larger batches than our memory size would permit.
-
     The lr and the num_steps are in the lot world.
-
     Args:
       loss: the loss tensor.
       global_step: the optional global step.
@@ -138,12 +134,11 @@ class DPGradientDescentOptimizer(tf.train.Optimizer):
 
     # Things to do for batches other than last of the lot.
     # Add non-noisy clipped grads to shadow variables.
+
     def non_last_in_lot_op(loss, var_list):
       """Ops to do for a typical batch.
-
       For a batch that is not the last one in the lot, we simply compute the
       sanitized gradients and apply them to the grad_acc variables.
-
       Args:
         loss: loss function tensor
         var_list: list of variables
@@ -166,11 +161,9 @@ class DPGradientDescentOptimizer(tf.train.Optimizer):
 
     def last_in_lot_op(loss, var_list, global_step):
       """Ops to do for last batch in a lot.
-
       For the last batch in the lot, we first add the sanitized gradients to
       the gradient acc variables, and then apply these
       values over to the original variables (via an apply gradient)
-
       Args:
         loss: loss function tensor
         var_list: list of variables
