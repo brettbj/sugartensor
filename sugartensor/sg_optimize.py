@@ -5,7 +5,7 @@ import sugartensor.per_example_gradients
 import sugartensor.dp_utils as utils
 
 
-class DPGradientDescentOptimizer(tf.train.GradientDescentOptimizer):
+class DPGradientDescentOptimizer(tf.train.Optimizer):
   """Differentially private gradient descent optimizer.
   """
 
