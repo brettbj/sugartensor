@@ -144,14 +144,6 @@ class DPGradientDescentOptimizer(tf.train.GradientDescentOptimizer):
     self._sanitizer = sanitizer
     self._sigma = sigma
 
-    self._eps_delta_t = None
-    self._sigma_t = None
-
-  def _prepare(self):
-    self._eps_delta_t = tf.convert_to_tensor(self._eps_delta, name="eps_delta")
-    self._sigma_t = tf.convert_to_tensor(self._sigma, name="sigma")
-    super(DPGradientDescentOptimizer, self)._prepare()
-
 
   def compute_sanitized_gradients(self, loss, var_list=None,
                                 add_noise=True):
@@ -172,6 +164,9 @@ class DPGradientDescentOptimizer(tf.train.GradientDescentOptimizer):
     xs = [tf.convert_to_tensor(x) for x in var_list]
     px_grads = per_example_gradients.PerExampleGradients(loss, xs)
     sanitized_grads = []
+
+    print(_sanitizer)
+    raise Exception('stop')
     for px_grad, v in zip(px_grads, var_list):
       tensor_name = utils.GetTensorOpName(v)
       sanitized_grad = self._sanitizer.sanitize(
