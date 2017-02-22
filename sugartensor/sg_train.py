@@ -192,7 +192,7 @@ def sg_optim(loss, **kwargs):
     # handle private differently
     if opt.optim == 'DP_GD':
         # only handle 1 batch per lot
-        sanitized_grads = self.compute_sanitized_gradients(
+        sanitized_grads = optim.compute_sanitized_gradients(
              loss, var_list=var_list)
         grads_and_vars = zip(sanitized_grads, var_list)
         self._assert_valid_dtypes([v for g, v in grads_and_vars if g is not None])
