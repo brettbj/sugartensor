@@ -163,7 +163,7 @@ def sg_optim(loss, **kwargs):
 
     # default training options
     opt += tf.sg_opt(optim='MaxProp', lr=0.001, beta1=0.9, beta2=0.99, category='')
-    
+
     # select optimizer
     if opt.optim == 'MaxProp':
         optim = tf.sg_optimize.MaxPropOptimizer(learning_rate=opt.lr, beta2=opt.beta2)
@@ -189,19 +189,24 @@ def sg_optim(loss, **kwargs):
     else:
         var_list = [t for t in tf.trainable_variables() if t.name.startswith(opt.category)]
 
-    # calc gradient
-    gradient = optim.compute_gradients(loss, var_list=var_list)
+    # handle private differently
+    if opt.optim == 'DP_GD':
+        # gradient update op
+        return optim.minimize(loss, global_step=tf.sg_global_step(),
+                              var_list=var_list)
+    else:
+        # calc gradient
+        gradient = optim.compute_gradients(loss, var_list=var_list)
 
-    # add summary
-    for v, g in zip(var_list, gradient):
-        # exclude batch normal statics
-        if 'mean' not in v.name and 'variance' not in v.name \
-                and 'beta' not in v.name and 'gamma' not in v.name:
-            tf.sg_summary_gradient(v, g)
+        # add summary
+        for v, g in zip(var_list, gradient):
+            # exclude batch normal statics
+            if 'mean' not in v.name and 'variance' not in v.name \
+                    and 'beta' not in v.name and 'gamma' not in v.name:
+                tf.sg_summary_gradient(v, g)
 
-    # gradient update op
-    return optim.apply_gradients(gradient, global_step=tf.sg_global_step())
-
+        # gradient update op
+        return optim.apply_gradients(gradient, global_step=tf.sg_global_step())
 
 def sg_train_func(func):
     r""" Decorates a function `func` as sg_train_func.

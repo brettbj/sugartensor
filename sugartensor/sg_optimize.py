@@ -219,6 +219,7 @@ class DPGradientDescentOptimizer(tf.train.GradientDescentOptimizer):
       grads_and_vars = zip(sanitized_grads, var_list)
       self._assert_valid_dtypes([v for g, v in grads_and_vars if g is not None])
 
+      tf.sg_summary_gradient(v, g)
       apply_grads = self.apply_gradients(grads_and_vars,
                                          global_step=global_step, name=name)
       return apply_grads
