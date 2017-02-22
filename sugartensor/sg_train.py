@@ -191,9 +191,17 @@ def sg_optim(loss, **kwargs):
 
     # handle private differently
     if opt.optim == 'DP_GD':
-        # gradient update op
-        return optim.minimize(loss, global_step=tf.sg_global_step(),
-                              var_list=var_list)
+        # only handle 1 batch per lot
+        sanitized_grads = self.compute_sanitized_gradients(
+             loss, var_list=var_list)
+        grads_and_vars = zip(sanitized_grads, var_list)
+        self._assert_valid_dtypes([v for g, v in grads_and_vars if g is not None])
+
+        tf.sg_summary_gradient(v, g)
+        apply_grads = self.apply_gradients(grads_and_vars,
+                                           global_step=global_step, name=name)
+        return apply_grads
+
     else:
         # calc gradient
         gradient = optim.compute_gradients(loss, var_list=var_list)
