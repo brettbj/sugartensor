@@ -398,7 +398,7 @@ def sg_train_func(func):
                     if not opt.console_log:
                         tf.sg_info('\tEpoch[%03d:lr=%7.5f:gs=%d] - loss = %s' %
                                    (ep, sess.run(_learning_rate), sess.run(tf.sg_global_step()),
-                                    ('NA' if loss is None else '%8.6f' % loss)))
+                                   ('NA' if loss is None else '%8.6f' % loss)))
 
                     if early_stopped:
                         tf.sg_info('\tEarly stopped ( no loss progress ).')
