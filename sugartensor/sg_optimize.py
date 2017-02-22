@@ -144,14 +144,14 @@ class DPGradientDescentOptimizer(tf.train.GradientDescentOptimizer):
     self._sanitizer = sanitizer
     self._sigma = sigma
 
-def _prepare(self):
+  def _prepare(self):
     self._eps_delta = tf.convert_to_tensor(self._eps_delta, name="eps_delta")
     self._sanitizer = tf.convert_to_tensor(self._sanitizer, name="sanitizer")
     self._sigma = f.convert_to_tensor(self._sigma, name="sigma")
     super(DPGradientDescentOptimizer, self)._prepare()
 
 
-def compute_sanitized_gradients(self, loss, var_list=None,
+  def compute_sanitized_gradients(self, loss, var_list=None,
                                 add_noise=True):
     """Compute the sanitized gradients.
     Args:
