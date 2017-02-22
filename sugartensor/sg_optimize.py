@@ -144,8 +144,8 @@ class DPGradientDescentOptimizer(tf.train.GradientDescentOptimizer):
     self._sanitizer = sanitizer
     self._sigma = sigma
 
-    self._eps_delta = None
-    self._sigma = None
+    self._eps_delta_t = None
+    self._sigma_t = None
 
   def _prepare(self):
     self._eps_delta_t = tf.convert_to_tensor(self._eps_delta, name="eps_delta")
