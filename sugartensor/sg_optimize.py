@@ -1,7 +1,7 @@
 from __future__ import absolute_import
 import tensorflow as tf
 
-import sugartensor.per_example_gradients
+import sugartensor.per_example_gradients as per_example_gradients
 import sugartensor.dp_utils as utils
 
 
