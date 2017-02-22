@@ -202,7 +202,7 @@ class DPGradientDescentOptimizer(tf.train.GradientDescentOptimizer):
     """
 
     # First validate the var_list
-
+    print('minimize called')
     if var_list is None:
       var_list = tf.trainable_variables()
     for var in var_list:
