@@ -146,7 +146,6 @@ class DPGradientDescentOptimizer(tf.train.GradientDescentOptimizer):
 
   def _prepare(self):
     self._eps_delta = tf.convert_to_tensor(self._eps_delta, name="eps_delta")
-    self._sanitizer = tf.convert_to_tensor(self._sanitizer, name="sanitizer")
     self._sigma = tf.convert_to_tensor(self._sigma, name="sigma")
     super(DPGradientDescentOptimizer, self)._prepare()
 
