@@ -163,9 +163,7 @@ def sg_optim(loss, **kwargs):
 
     # default training options
     opt += tf.sg_opt(optim='MaxProp', lr=0.001, beta1=0.9, beta2=0.99, category='')
-    print(opt.gaussian_sanitizer)
-    raise Exception('stop')
-
+    
     # select optimizer
     if opt.optim == 'MaxProp':
         optim = tf.sg_optimize.MaxPropOptimizer(learning_rate=opt.lr, beta2=opt.beta2)

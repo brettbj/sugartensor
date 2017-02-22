@@ -129,9 +129,9 @@ class DPGradientDescentOptimizer(tf.train.GradientDescentOptimizer):
     #Also, if needed, define the gradient accumulators
     self._batches_per_lot = batches_per_lot
     self._grad_accum_dict = {}
-    # if batches_per_lot > 1:
-    #   self._batch_count = tf.Variable(1, dtype=tf.int32, trainable=False,
-    #                                   name="batch_count")
+    if batches_per_lot > 1:
+      self._batch_count = tf.Variable(1, dtype=tf.int32, trainable=False,
+                                      name="batch_count")
     #   var_list = tf.trainable_variables()
     #   with tf.variable_scope("grad_acc_for"):
     #     for var in var_list:
