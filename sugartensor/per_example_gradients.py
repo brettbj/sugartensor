@@ -229,6 +229,7 @@ class Conv2DPXG(object):
            calling tf.gradients on the copy gives the gradient for just
                   that example.
     """
+    print(type(input_shape))
     input_shape = [int(e) for e in input_.get_shape()]
     batch_size = input_shape[0]
     input_px = [tf.slice(
@@ -252,8 +253,8 @@ class Conv2DPXG(object):
   def __call__(self, w, z_grads):
     idx = list(self.op.inputs).index(w)
     # Make sure that `op` was actually applied to `w`
-    # assert idx != -1
-    # assert len(z_grads) == len(self.op.outputs)
+    assert idx != -1
+    assert len(z_grads) == len(self.op.outputs)
     # The following assert may be removed when we are ready to use this
     # for general purpose code.
     # This assert is only expected to hold in the contex of our preliminary
@@ -297,8 +298,8 @@ class AddPXG(object):
   def __call__(self, x, z_grads):
     idx = list(self.op.inputs).index(x)
     # Make sure that `op` was actually applied to `x`
-    # assert idx != -1
-    # assert len(z_grads) == len(self.op.outputs)
+    assert idx != -1
+    assert len(z_grads) == len(self.op.outputs)
     # The following assert may be removed when we are ready to use this
     # for general purpose code.
     # This assert is only expected to hold in the contex of our preliminary
@@ -355,12 +356,11 @@ def PerExampleGradients(ys, xs, grad_ys=None, name="gradients",
     ops = []
     for z in zs:
       ops = _ListUnion(ops, [z.op])
-    # @TODO does this break everything?
-    # if len(ops) != 1:
-    #   raise NotImplementedError("Currently we only support the case "
-    #                             "where each x is consumed by exactly "
-    #                             "one op. but %s is consumed by %d ops."
-    #                             % (x.name, len(ops)))
+    if len(ops) != 1:
+      raise NotImplementedError("Currently we only support the case "
+                                "where each x is consumed by exactly "
+                                "one op. but %s is consumed by %d ops."
+                                % (x.name, len(ops)))
     op = ops[0]
     pxg_rule = pxg_registry(op, colocate_gradients_with_ops, gate_gradients)
     x_grad = pxg_rule(x, [grad_dict[z] for z in zs])
