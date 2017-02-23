@@ -202,13 +202,13 @@ def sg_optim(loss, **kwargs):
         sanitized_grads = optim.compute_gradients(loss, var_list=var_list)
         # sanitized_grads = optim.compute_sanitized_gradients(
         #      loss, var_list=var_list)
-        for v, g in zip(var_list, gradient):
+        for v, g in zip(var_list, sanitized_grads):
             # exclude batch normal statics
             if 'mean' not in v.name and 'variance' not in v.name \
                     and 'beta' not in v.name and 'gamma' not in v.name:
                 tf.sg_summary_gradient(v, g)
-                
-        grad_op = optim.apply_gradients(grads_and_vars,
+
+        grad_op = optim.apply_gradients(sanitized_grads,
                                         global_step=tf.sg_global_step)
     else:
     # calc gradient
