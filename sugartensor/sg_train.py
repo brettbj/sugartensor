@@ -199,8 +199,9 @@ def sg_optim(loss, **kwargs):
         # only handle 1 batch per lot
         print(type(loss))
         print(loss)
-        sanitized_grads = optim.compute_sanitized_gradients(
-             loss, var_list=var_list)
+        sanitized_gradient = optim.compute_gradients(loss, var_list=var_list)
+        # sanitized_grads = optim.compute_sanitized_gradients(
+        #      loss, var_list=var_list)
         grads_and_vars = zip(sanitized_grads, var_list)
         optim._assert_valid_dtypes([v for g, v in grads_and_vars if g is not None])
 
