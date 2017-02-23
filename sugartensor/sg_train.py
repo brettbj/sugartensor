@@ -199,9 +199,9 @@ def sg_optim(loss, **kwargs):
         # only handle 1 batch per lot
         print(type(loss))
         print(loss)
-        sanitized_grads = optim.compute_gradients(loss, var_list=var_list)
-        # sanitized_grads = optim.compute_sanitized_gradients(
-        #      loss, var_list=var_list)
+        sanitized_grads = optim.compute_sanitized_gradients(loss,
+                                                            var_list=var_list)
+
         for v, g in zip(var_list, sanitized_grads):
             # exclude batch normal statics
             if 'mean' not in v.name and 'variance' not in v.name \
