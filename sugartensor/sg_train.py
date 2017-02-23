@@ -177,6 +177,13 @@ def sg_optim(loss, **kwargs):
         optim = tf.sg_optimize.AdaMaxOptimizer(learning_rate=opt.lr, beta1=opt.beta1, beta2=opt.beta2)
     elif opt.optim == 'Adam':
         optim = tf.train.AdamOptimizer(learning_rate=opt.lr, beta1=opt.beta1, beta2=opt.beta2)
+    elif: opt.optim == 'DP_GD':
+        optim = tf.sg_optimize.DPGradientDescentOptimizer(
+                    opt.lr,
+                    [opt.eps, opt.delta],
+                    opt.gaussian_sanitizer,
+                    sigma=opt.sigma,
+                    batches_per_lot=opt.batches_per_lot)
     else:
         optim = tf.train.GradientDescentOptimizer(learning_rate=opt.lr)
 
@@ -188,18 +195,29 @@ def sg_optim(loss, **kwargs):
     else:
         var_list = [t for t in tf.trainable_variables() if t.name.startswith(opt.category)]
 
+    if opt.optim == 'DP_GD':
+        # only handle 1 batch per lot
+        sanitized_grads = self.compute_sanitized_gradients(
+             loss, var_list=var_list)
+        grads_and_vars = zip(sanitized_grads, var_list)
+        self._assert_valid_dtypes([v for g, v in grads_and_vars if g is not None])
+
+        tf.sg_summary_gradient(v, g)
+        grad_op = optim.apply_gradients(grads_and_vars,
+                                           global_step=global_step, name=name)
+    else:
     # calc gradient
-    gradient = optim.compute_gradients(loss, var_list=var_list)
+        gradient = optim.compute_gradients(loss, var_list=var_list)
 
-    # add summary
-    for v, g in zip(var_list, gradient):
-        # exclude batch normal statics
-        if 'mean' not in v.name and 'variance' not in v.name \
-                and 'beta' not in v.name and 'gamma' not in v.name:
-            tf.sg_summary_gradient(v, g)
+        # add summary
+        for v, g in zip(var_list, gradient):
+            # exclude batch normal statics
+            if 'mean' not in v.name and 'variance' not in v.name \
+                    and 'beta' not in v.name and 'gamma' not in v.name:
+                tf.sg_summary_gradient(v, g)
 
-    # gradient update op
-    grad_op = optim.apply_gradients(gradient, global_step=tf.sg_global_step())
+        # gradient update op
+        grad_op = optim.apply_gradients(gradient, global_step=tf.sg_global_step())
 
     # extra update ops within category ( for example, batch normal running stat update )
     if isinstance(opt.category, (tuple, list)):
