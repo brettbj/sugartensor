@@ -355,11 +355,12 @@ def PerExampleGradients(ys, xs, grad_ys=None, name="gradients",
     ops = []
     for z in zs:
       ops = _ListUnion(ops, [z.op])
-    if len(ops) != 1:
-      raise NotImplementedError("Currently we only support the case "
-                                "where each x is consumed by exactly "
-                                "one op. but %s is consumed by %d ops."
-                                % (x.name, len(ops)))
+    # @TODO does this break everything?
+    # if len(ops) != 1:
+    #   raise NotImplementedError("Currently we only support the case "
+    #                             "where each x is consumed by exactly "
+    #                             "one op. but %s is consumed by %d ops."
+    #                             % (x.name, len(ops)))
     op = ops[0]
     pxg_rule = pxg_registry(op, colocate_gradients_with_ops, gate_gradients)
     x_grad = pxg_rule(x, [grad_dict[z] for z in zs])
