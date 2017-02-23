@@ -197,6 +197,8 @@ def sg_optim(loss, **kwargs):
 
     if opt.optim == 'DP_GD':
         # only handle 1 batch per lot
+        print(type(loss))
+        print(loss)
         sanitized_grads = optim.compute_sanitized_gradients(
              loss, var_list=var_list)
         grads_and_vars = zip(sanitized_grads, var_list)
