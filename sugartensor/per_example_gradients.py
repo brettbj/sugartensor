@@ -252,8 +252,8 @@ class Conv2DPXG(object):
   def __call__(self, w, z_grads):
     idx = list(self.op.inputs).index(w)
     # Make sure that `op` was actually applied to `w`
-    assert idx != -1
-    assert len(z_grads) == len(self.op.outputs)
+    # assert idx != -1
+    # assert len(z_grads) == len(self.op.outputs)
     # The following assert may be removed when we are ready to use this
     # for general purpose code.
     # This assert is only expected to hold in the contex of our preliminary
