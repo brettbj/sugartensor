@@ -207,7 +207,8 @@ def sg_optim(loss, **kwargs):
 
         tf.sg_summary_gradient(v, g)
         grad_op = optim.apply_gradients(grads_and_vars,
-                                           global_step=global_step, name=name)
+                                        global_step=tf.sg_global_step(),
+                                        name=name)
     else:
     # calc gradient
         gradient = optim.compute_gradients(loss, var_list=var_list)
